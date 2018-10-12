@@ -8,6 +8,9 @@ spring:
     username: root
     password: 123456
     driverClassName: com.mysql.jdbc.Driver
+  output:
+    ansi: #设置支持颜色显示
+      enabled: always
 
 mybatis-plus:  #使用plus插件时需要加上-plus
   global-config:
