@@ -1,6 +1,6 @@
 logging:
   level:
-    com.devloper.joker.mybatispluscascade.mapper: debug
+    com.devloper.joker.mybatispluscascade: debug
 
 spring:
   datasource:

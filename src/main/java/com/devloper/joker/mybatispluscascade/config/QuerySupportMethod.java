@@ -21,10 +21,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 用于支持自定义Wrapper查询
@@ -35,6 +32,48 @@ public class QuerySupportMethod extends AbstractMethod {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final Map<Class, Map<String, Method>> supportMethodMap = new HashMap<>(16);
+
+    protected final List<QuerySupportProperty> propertyList = new ArrayList<>(16);
+
+    public class QuerySupportProperty {
+        private Class<?> mapperClass;
+        private Class<?> modelClass;
+        private TableInfo tableInfo;
+
+        public QuerySupportProperty() {
+        }
+
+        public QuerySupportProperty(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+            this.mapperClass = mapperClass;
+            this.modelClass = modelClass;
+            this.tableInfo = tableInfo;
+        }
+
+        public Class<?> getMapperClass() {
+            return mapperClass;
+        }
+
+        public void setMapperClass(Class<?> mapperClass) {
+            this.mapperClass = mapperClass;
+        }
+
+        public Class<?> getModelClass() {
+            return modelClass;
+        }
+
+        public void setModelClass(Class<?> modelClass) {
+            this.modelClass = modelClass;
+        }
+
+        public TableInfo getTableInfo() {
+            return tableInfo;
+        }
+
+        public void setTableInfo(TableInfo tableInfo) {
+            this.tableInfo = tableInfo;
+        }
+    }
+
 
     /**
      * 当不能直接通过mappedStatement获取sql时,使用该mapper方法的@Select获取
@@ -136,12 +175,18 @@ public class QuerySupportMethod extends AbstractMethod {
         return result;
     }
 
-    @Override
-    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+    /**
+     * 重新注入@QuerySupport相关的方法
+     * @param mapperClass
+     * @param modelClass
+     * @param tableInfo
+     */
+    private void injectQuerySupportMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String[] methodList = getSupportMethods(mapperClass, modelClass, tableInfo);
         String mapperClassName = mapperClass.getName();
         for (String method : methodList) {
             String statementName = mapperClassName + StringPool.DOT + method;
+            logger.debug("query support reset {} statement sql", statementName);
             String beforeSql;
             try {
                 MappedStatement mappedStatement = configuration.getMappedStatement(statementName);
@@ -175,6 +220,25 @@ public class QuerySupportMethod extends AbstractMethod {
             }
         }
         removeSupportMap(mapperClass);
+    }
+
+    /**
+     * 启动注入
+     */
+    public void injectQuerySupportMappedStatement() {
+        for (QuerySupportProperty property : propertyList) {
+            injectQuerySupportMappedStatement(property.getMapperClass(), property.getModelClass(), property.getTableInfo());
+        }
+    }
+
+
+    @Override
+    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+        /**
+         * 仅用于记录mapper相关数据
+         */
+        QuerySupportProperty property = new QuerySupportProperty(mapperClass, modelClass, tableInfo);
+        propertyList.add(property);
         return null;
     }
 
