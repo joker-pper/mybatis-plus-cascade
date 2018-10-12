@@ -1,0 +1,17 @@
+logging:
+  level:
+    com.devloper.joker.mybatispluscascade.mapper: debug
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mybatis-plus-cascade?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+    driverClassName: com.mysql.jdbc.Driver
+
+mybatis-plus:  #使用plus插件时需要加上-plus
+  global-config:
+    db-config:
+      id-type: auto  #id_worker  主键默认id_worker
+  type-aliases-package: com.devloper.joker.mybatispluscascade.domain
+
