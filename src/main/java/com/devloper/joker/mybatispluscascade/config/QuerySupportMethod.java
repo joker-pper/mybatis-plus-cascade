@@ -154,8 +154,8 @@ public class QuerySupportMethod extends AbstractMethod {
     public String getMethodSqlByAnnotation(Class<?> mapperClass, String name) {
         String result = null;
         if (getSqlWithAnnotation) {
-            String text = "query support find " + mapperClass.getName() + "." + name + " sql ";
-            logger.info(text + "by @Select");
+            String text = "Query Support find " + mapperClass.getName() + "." + name + " sql ";
+            logger.debug(text + "by @Select");
             String error = text + "by @Select has error, cause by : ";
             Method selectMethod = getSupportMethod(mapperClass, name);
             Assert.notNull(selectMethod, error + "can't find method");
@@ -186,16 +186,13 @@ public class QuerySupportMethod extends AbstractMethod {
         String mapperClassName = mapperClass.getName();
         for (String method : methodList) {
             String statementName = mapperClassName + StringPool.DOT + method;
-            logger.debug("query support reset {} statement sql", statementName);
             String beforeSql;
             try {
                 MappedStatement mappedStatement = configuration.getMappedStatement(statementName);
                 beforeSql = mappedStatement.getBoundSql(null).getSql();
             } catch (Exception e) {
+                logger.warn("Query Support get statement before sql error, cause by : {}", e.getMessage());
                 beforeSql = getMethodSqlByAnnotation(mapperClass, method);
-                if (StringUtils.isEmpty(beforeSql)) {
-                    logger.warn("query support get statement before sql error, cause by : {}", e.getMessage());
-                }
             }
 
             try {
@@ -214,9 +211,12 @@ public class QuerySupportMethod extends AbstractMethod {
                     this.removeBeforeMappedStatement(statementName);
                     SqlSource sqlSource = languageDriver.createSqlSource(configuration, currentSql, modelClass);
                     this.addSelectMappedStatement(mapperClass, method, sqlSource, modelClass, tableInfo);
+
+                    logger.debug("Query Support afresh inject {} statement success", statementName);
+
                 }
             } catch (Exception e) {
-                logger.warn("query support reset statement error, cause by : {}", e.getMessage());
+                logger.warn("Query Support afresh inject statement error, cause by : {}", e.getMessage());
             }
         }
         removeSupportMap(mapperClass);
@@ -308,7 +308,7 @@ public class QuerySupportMethod extends AbstractMethod {
                 configuration.getMappedStatementNames().remove(statementName);
             }
         } catch (Exception e) {
-            logger.warn("query support remove before statement error, cause by : {}", e.getMessage());
+            logger.warn("Query Support remove before statement error, cause by : {}", e.getMessage());
         }
     }
 
