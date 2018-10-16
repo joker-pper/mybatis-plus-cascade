@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.config;
+package com.devloper.joker.mybatispluscascade.config.query;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

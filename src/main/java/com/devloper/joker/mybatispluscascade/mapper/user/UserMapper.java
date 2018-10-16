@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.devloper.joker.mybatispluscascade.config.QuerySupport;
+import com.devloper.joker.mybatispluscascade.config.query.QuerySupport;
 import com.devloper.joker.mybatispluscascade.domain.user.User;
 import com.devloper.joker.mybatispluscascade.domain.user.UserRoleVO;
 import org.apache.ibatis.annotations.*;

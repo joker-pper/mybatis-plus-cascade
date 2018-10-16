@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.config;
+package com.devloper.joker.mybatispluscascade.config.query;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;

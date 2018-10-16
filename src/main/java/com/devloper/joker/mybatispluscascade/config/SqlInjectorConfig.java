@@ -2,13 +2,14 @@ package com.devloper.joker.mybatispluscascade.config;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.devloper.joker.mybatispluscascade.config.query.QuerySupportMethod;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @Component
-public class InjectorConfig  extends DefaultSqlInjector {
+public class SqlInjectorConfig extends DefaultSqlInjector {
 
     @Resource
     private QuerySupportMethod querySupportMethod;

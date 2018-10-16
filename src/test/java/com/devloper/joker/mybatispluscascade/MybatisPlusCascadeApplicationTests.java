@@ -60,8 +60,8 @@ public class MybatisPlusCascadeApplicationTests {
 
     @Test
     public void customSelectPageWithXml() {
-        Page<User> userPage = new Page<>(1, 5);
-        IPage<User> result = userMapper.selectPageByCustomWithXml(userPage, new QueryWrapper<User>().eq("role_id", 2).eq("username", "joker"));
+        Page<User> userPage = new Page<>(1, 1);
+        IPage<User> result = userMapper.selectPageByCustomWithXml(userPage, new QueryWrapper<User>().eq("role_id", 2).or().eq("username", "joker"));
         logger.info("查询的列表数据为: {}", toJson(result));
     }
 
