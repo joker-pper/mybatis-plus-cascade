@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 //resultMap 只针对plus所封装的方法
-@TableName(value = "user", resultMap = "userJoinResult")
+@TableName(value = "user", resultMap = "userCascadeResult")
 public class User implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;

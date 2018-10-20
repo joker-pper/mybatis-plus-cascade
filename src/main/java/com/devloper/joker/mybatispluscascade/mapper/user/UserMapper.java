@@ -10,6 +10,7 @@ import com.devloper.joker.mybatispluscascade.domain.user.User;
 import com.devloper.joker.mybatispluscascade.domain.user.UserRoleVO;
 import org.apache.ibatis.annotations.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 //可直接在这里定义方法列表,默认只有在类上加注解才会支持方法
@@ -34,12 +35,32 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     //类型优先级 (若未存在注解,当类型与mapper泛型不一致时使用其本身) @ResultType > @ResultMap > @Table(在类型一致时应用存在的resultMap)
-    @ResultMap("userJoinResult")
+    @ResultMap("userCascadeResult")
     @QuerySupport
     @Select({"<script>", JOIN_SQL, "</script>"})
     Page<User> selectPageByCustom(Page<User> page, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
 
+
+    @ResultMap("userNotCascadeResult")
+    @QuerySupport
+    @Select({"<script>", "SELECT * FROM user", "</script>"})
+    Page<User> selectPageByCustomWithAssociation(Page<User> page, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+
+
     @QuerySupport
     Page<User> selectPageByCustomWithXml(Page<User> page, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+
+    @QuerySupport
+    @Select({JOIN_SQL, "WHERE user.id = #{id}"})
+    User selectCascadeById(Serializable id);
+
+
+    @ResultMap("userCascadeResult")
+    @Select({JOIN_SQL, "WHERE user.id = #{id}"})
+    User selectCascadeById2(Serializable id);
+
+    @QuerySupport
+    @Select({"${text}"})
+    List<User> selectByText(String text, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
 
 }

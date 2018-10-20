@@ -5,18 +5,17 @@
 <mapper namespace="com.devloper.joker.mybatispluscascade.mapper.user.UserMapper">
 
     <!-- 联合查询加映射字段 -->
-    <resultMap id="userJoinResult" type="user">
+    <resultMap id="userCascadeResult" type="user">
         <id column="id" property="id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="createTime" column="create_time"/>
         <association property="role" columnPrefix="role_" resultMap="roleResult"/>
-
     </resultMap>
 
-    <resultMap id="userNotJoinResult" type="user">
+    <resultMap id="userNotCascadeResult" type="user">
         <association property="role" column="role_id" javaType="Role"
-                     select="com.devloper.joker.springbootmybatis.mapper.user.RoleMapper.selectById"/>
+                     select="com.devloper.joker.mybatispluscascade.mapper.user.RoleMapper.selectById"/>
     </resultMap>
 
     <resultMap id="roleResult" type="role">
@@ -25,7 +24,7 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
-     <select id="selectPageByCustomWithXml" resultMap="userJoinResult">
+     <select id="selectPageByCustomWithXml" resultMap="userCascadeResult">
       SELECT user.*,
       role.name as role_name,
       role.create_time as role_create_time

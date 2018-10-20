@@ -45,6 +45,7 @@ public class MybatisPlusCascadeApplicationTests {
         user.setCreateTime(new Date());
         Role role = new Role();
         role.setId(2L);
+        //依赖于User实体类中role字段注解上的el
         user.setRole(role);
         userMapper.insert(user);
         logger.info("insert user: {}", toJson(user));
@@ -84,10 +85,43 @@ public class MybatisPlusCascadeApplicationTests {
         logger.info("查询的列表数据为: {}", toJson(result));
     }
 
+    @Test
+    public void selectPageByCustomWithAssociation() {
+        Page<User> userPage = new Page<>(1, 2);
+        IPage<User> result = userMapper.selectPageByCustomWithAssociation(userPage, new QueryWrapper<User>().lambda().nested(it -> it.eq(User::getRole, 1).or().eq(User::getUsername, "joker")).
+                or().eq(User::getUsername, "ss"));
+        logger.info("查询的列表数据为: {}", toJson(result));
+    }
+
 
     @Test
     public void findUserWithRoleByVoWithQuery() {
         Object results = userMapper.findUserWithRoleByVoWithQueryList(new QueryWrapper<UserRoleVO>().eq("role.id", 1L).eq("role.name", "admin"));
         logger.info("查询的列表数据为: {}", toJson(results));
+    }
+
+    @Test
+    public void selectCascadeById() {
+        //最终返回结果包含关联对象属性值依赖于@TableName(resultMap = "")
+        User user = userMapper.selectCascadeById(1L);
+        logger.info("result class: {}", user.getClass());
+        logger.info("result: {}", toJson(user));
+    }
+
+    @Test
+    public void selectCascadeById2() {
+        //需要设置@ResultMap
+        User user = userMapper.selectCascadeById2( 1L);
+        logger.info("result class: {}", user.getClass());
+        logger.info("result: {}", toJson(user));
+    }
+
+    @Test
+    public void selectByText() {
+        List<User> result = userMapper.selectByText(UserMapper.JOIN_SQL, new QueryWrapper<User>().eq("role_id", 2).or().eq("user.id", 1L));
+        logger.info("result: {}", toJson(result));
+
+        result = userMapper.selectByText("SELECT * FROM user", new QueryWrapper<User>().eq("role_id", 2).or().eq("id", 1L));
+        logger.info("result: {}", toJson(result));
     }
 }
