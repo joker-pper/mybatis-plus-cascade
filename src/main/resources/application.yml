@@ -4,13 +4,18 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/mybatis-plus-cascade?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    driver-class-name: org.h2.Driver
+    schema: classpath:db/schema-h2.sql
+    data: classpath:db/data-h2.sql
+    url: jdbc:h2:mem:test
     username: root
-    password: 123456
-    driverClassName: com.mysql.jdbc.Driver
+    password: test
+
   output:
     ansi: #设置支持颜色显示
       enabled: always
+  profiles:
+    #active: mysql  #mysql
 
 mybatis-plus:  #使用plus插件时需要加上-plus
   global-config:

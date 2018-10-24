@@ -61,6 +61,6 @@ public interface UserMapper extends BaseMapper<User> {
 
     @QuerySupport
     @Select({"${text}"})
-    List<User> selectByText(String text, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+    List<User> selectByText(@Param("text") String text, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
 
 }
