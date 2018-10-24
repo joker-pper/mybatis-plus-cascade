@@ -10,7 +10,6 @@ spring:
     url: jdbc:h2:mem:test
     username: root
     password: test
-
   output:
     ansi: #设置支持颜色显示
       enabled: always
