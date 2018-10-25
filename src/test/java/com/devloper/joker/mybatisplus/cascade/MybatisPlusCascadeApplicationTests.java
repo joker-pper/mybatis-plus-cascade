@@ -1,14 +1,14 @@
-package com.devloper.joker.mybatispluscascade;
+package com.devloper.joker.mybatisplus.cascade;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.devloper.joker.mybatispluscascade.domain.user.Role;
-import com.devloper.joker.mybatispluscascade.domain.user.User;
-import com.devloper.joker.mybatispluscascade.domain.user.UserRoleVO;
-import com.devloper.joker.mybatispluscascade.mapper.user.UserMapper;
-import com.devloper.joker.mybatispluscascade.support.JackSonUtils;
+import com.devloper.joker.mybatisplus.cascade.domain.user.Role;
+import com.devloper.joker.mybatisplus.cascade.domain.user.User;
+import com.devloper.joker.mybatisplus.cascade.domain.user.UserRoleVO;
+import com.devloper.joker.mybatisplus.cascade.mapper.user.UserMapper;
+import com.devloper.joker.mybatisplus.cascade.support.JackSonUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -62,7 +62,29 @@ public class MybatisPlusCascadeApplicationTests {
     @Test
     public void customSelectPageWithXml() {
         Page<User> userPage = new Page<>(1, 1);
-        IPage<User> result = userMapper.selectPageByCustomWithXml(userPage, new QueryWrapper<User>().eq("role_id", 2).or().eq("username", "joker"));
+        IPage<User> result = userMapper.selectPageByCustomWithXml(userPage,  new QueryWrapper<User>().eq("role_id", 2).or().eq("username", "joker"));
+        logger.info("查询的列表数据为: {}", toJson(result));
+    }
+
+    @Test
+    public void selectPageByCustomWithXmlAndBind() {
+        Page<User> userPage = new Page<>(1, 1);
+        IPage<User> result = userMapper.selectPageByCustomWithXmlAndBind(userPage, "name", "create_time", new QueryWrapper<User>().eq("role_id", 2).or().eq("username", "joker"));
+        logger.info("查询的列表数据为: {}", toJson(result));
+    }
+
+    @Test
+    public void selectPageByCustomWithXmlAndInclude() {
+        Page<User> userPage = new Page<>(1, 1);
+        IPage<User> result = userMapper.selectPageByCustomWithXmlAndInclude(userPage, new QueryWrapper<User>().eq("role_id", 2).or().eq("username", "joker"));
+        logger.info("查询的列表数据为: {}", toJson(result));
+    }
+
+
+    @Test
+    public void selectPageByCustomWithXmlAndIncludeAndBind() {
+        Page<User> userPage = new Page<>(1, 1);
+        IPage<User> result = userMapper.selectPageByCustomWithXmlAndIncludeAndBind(userPage, "role", new QueryWrapper<User>().eq("role_id", 2).or().eq("username", "joker"));
         logger.info("查询的列表数据为: {}", toJson(result));
     }
 

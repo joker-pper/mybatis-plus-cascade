@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade;
+package com.devloper.joker.mybatisplus.cascade;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

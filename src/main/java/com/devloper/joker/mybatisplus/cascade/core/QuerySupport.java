@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.config.query;
+package com.devloper.joker.mybatisplus.cascade.core;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

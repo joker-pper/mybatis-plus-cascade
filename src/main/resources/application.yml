@@ -1,6 +1,6 @@
 logging:
   level:
-    com.devloper.joker.mybatispluscascade: debug
+    com.devloper.joker: debug
 
 spring:
   datasource:
@@ -20,5 +20,5 @@ mybatis-plus:  #使用plus插件时需要加上-plus
   global-config:
     db-config:
       id-type: auto  #id_worker  主键默认id_worker
-  type-aliases-package: com.devloper.joker.mybatispluscascade.domain
+  type-aliases-package: com.devloper.joker.mybatisplus.cascade.domain
 

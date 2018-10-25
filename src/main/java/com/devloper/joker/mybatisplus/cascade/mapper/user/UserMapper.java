@@ -1,20 +1,20 @@
-package com.devloper.joker.mybatispluscascade.mapper.user;
+package com.devloper.joker.mybatisplus.cascade.mapper.user;
 
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.devloper.joker.mybatispluscascade.config.query.QuerySupport;
-import com.devloper.joker.mybatispluscascade.domain.user.User;
-import com.devloper.joker.mybatispluscascade.domain.user.UserRoleVO;
+import com.devloper.joker.mybatisplus.cascade.core.QuerySupport;
+import com.devloper.joker.mybatisplus.cascade.domain.user.User;
+import com.devloper.joker.mybatisplus.cascade.domain.user.UserRoleVO;
 import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 //可直接在这里定义方法列表,默认只有在类上加注解才会支持方法
-@QuerySupport("selectPageByCustomWithXml")
+@QuerySupport()
 public interface UserMapper extends BaseMapper<User> {
 
     String JOIN_SQL = "SELECT user.*, role.name as role_name, role.create_time as role_create_time FROM user as user LEFT JOIN role as role ON user.role_id = role.id";
@@ -46,9 +46,18 @@ public interface UserMapper extends BaseMapper<User> {
     @Select({"<script>", "SELECT * FROM user", "</script>"})
     Page<User> selectPageByCustomWithAssociation(Page<User> page, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
 
-
     @QuerySupport
     Page<User> selectPageByCustomWithXml(Page<User> page, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+
+    @QuerySupport
+    Page<User> selectPageByCustomWithXmlAndBind(Page<User> page, @Param("roleNameText") String roleNameText, @Param("roleCreateTimeText") String roleCreateTimeText, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+
+    @QuerySupport
+    Page<User> selectPageByCustomWithXmlAndInclude(Page<User> page, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+
+    @QuerySupport
+    Page<User> selectPageByCustomWithXmlAndIncludeAndBind(Page<User> page, @Param("text") String roleText, @Param(Constants.WRAPPER) Wrapper<User> wrapper);
+
 
     @QuerySupport
     @Select({JOIN_SQL, "WHERE user.id = #{id}"})

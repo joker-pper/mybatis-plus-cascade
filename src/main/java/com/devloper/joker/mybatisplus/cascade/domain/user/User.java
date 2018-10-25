@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.domain.user;
+package com.devloper.joker.mybatisplus.cascade.domain.user;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;
