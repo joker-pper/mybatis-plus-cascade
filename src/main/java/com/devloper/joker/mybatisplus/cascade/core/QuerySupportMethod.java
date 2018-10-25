@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.config.query;
+package com.devloper.joker.mybatisplus.cascade.core;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
@@ -14,17 +14,13 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
-import org.apache.ibatis.scripting.xmltags.MixedSqlNode;
-import org.apache.ibatis.scripting.xmltags.SqlNode;
-import org.apache.ibatis.scripting.xmltags.TextSqlNode;
+import org.apache.ibatis.scripting.xmltags.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -32,9 +28,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * 用于支持自定义Wrapper查询
+ * 用于支持自定义Wrapper查询，
+ * 当方法满足时获取sql text后与Wrapper参数(作为动态条件)结合重新生成对应的mappedStatement,
+ * sql text主要是作为基本查询语句,也支持xml中bind、include标签
  */
-@Component
 public class QuerySupportMethod extends AbstractMethod {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -188,7 +185,7 @@ public class QuerySupportMethod extends AbstractMethod {
         return result;
     }
 
-    public <T> T getField(Class<T> fieldClass, String fieldName, Object target) {
+    public <T> T getFieldValue(Class<T> fieldClass, String fieldName, Object target) {
         Field field = ReflectionUtils.findField(target.getClass(), fieldName);
         field.setAccessible(true);
         return (T) ReflectionUtils.getField(field, target);
@@ -198,11 +195,20 @@ public class QuerySupportMethod extends AbstractMethod {
     public String getSqlText(SqlNode sqlNode) {
         if (sqlNode != null) {
             if (sqlNode instanceof TextSqlNode) {
-                return getField(String.class, "text", sqlNode);
+                return getFieldValue(String.class, "text", sqlNode);
             } else if (sqlNode instanceof MixedSqlNode) {
-                List<SqlNode> sqlNodeList = getField(List.class, "contents", sqlNode);
-                Assert.isTrue(sqlNodeList.size() == 1, "MixedSqlNode SqlNode contents should only one");
-                return getSqlText(sqlNodeList.get(0));
+                List<SqlNode> sqlNodeList = getFieldValue(List.class, "contents", sqlNode);
+                Assert.isTrue(sqlNodeList != null && !sqlNodeList.isEmpty(), "MixedSqlNode SqlNode contents should not empty");
+                StringBuilder sb = new StringBuilder();
+                for (SqlNode node: sqlNodeList) {
+                    sb.append(getSqlText(node));
+                }
+                return sb.toString();
+            } else if (sqlNode instanceof StaticTextSqlNode) {
+                return getFieldValue(String.class, "text", sqlNode);
+            } else if (sqlNode instanceof VarDeclSqlNode) {
+                return " <bind name=\""+ getFieldValue(String.class, "name", sqlNode)
+                        +"\" value =\"" + getFieldValue(String.class, "expression", sqlNode)  + " \" /> ";
             }
         }
         return null;
@@ -211,11 +217,11 @@ public class QuerySupportMethod extends AbstractMethod {
     public String getSqlText(SqlSource sqlSource) {
         if (sqlSource != null) {
             if (sqlSource instanceof RawSqlSource) {
-                return getSqlText(getField(RawSqlSource.class, "sqlSource", sqlSource));
+                return getSqlText(getFieldValue(RawSqlSource.class, "sqlSource", sqlSource));
             } else if (sqlSource instanceof StaticSqlSource) {
-                return getField(String.class, "sql", sqlSource);
+                return getFieldValue(String.class, "sql", sqlSource);
             } else if (sqlSource instanceof DynamicSqlSource) {
-                SqlNode sqlNode = getField(SqlNode.class, "rootSqlNode", sqlSource);
+                SqlNode sqlNode = getFieldValue(SqlNode.class, "rootSqlNode", sqlSource);
                 return getSqlText(sqlNode);
             }
         }
@@ -244,7 +250,7 @@ public class QuerySupportMethod extends AbstractMethod {
                 }
             }
 
-            MappedStatement mappedStatement = null;
+            MappedStatement mappedStatement;
             SqlSource sqlSource = null;
             try {
                 mappedStatement = configuration.getMappedStatement(statementName);
@@ -266,7 +272,6 @@ public class QuerySupportMethod extends AbstractMethod {
                     currentSql = getSqlText(sqlSource);
                 }
             }
-
             if (buildSqlSource) {
                 Assert.isTrue(StringUtils.isNotEmpty(currentSql), "Query Support can't correct find sql text about " + statementName);
                 //logger.debug("Query Support find {} sql text: \r\n\t {}", statementName, currentSql);
@@ -300,9 +305,11 @@ public class QuerySupportMethod extends AbstractMethod {
      * 启动注入
      */
     public void injectQuerySupportMappedStatement() {
+        logger.debug("Query Support afresh inject statement start");
         for (QuerySupportProperty property : propertyList) {
             injectQuerySupportMappedStatement(property.getMapperClass(), property.getModelClass(), property.getTableInfo());
         }
+        logger.info("Query Support afresh inject statement started");
     }
 
 

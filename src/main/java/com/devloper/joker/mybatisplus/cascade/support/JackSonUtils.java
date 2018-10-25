@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.support;
+package com.devloper.joker.mybatisplus.cascade.support;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

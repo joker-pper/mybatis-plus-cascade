@@ -1,7 +1,9 @@
-package com.devloper.joker.mybatispluscascade.config;
+package com.devloper.joker.mybatisplus.cascade.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
+import com.devloper.joker.mybatisplus.cascade.core.QuerySupportMethod;
+import com.devloper.joker.mybatisplus.cascade.core.SqlInjectorConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 @Configuration
-@MapperScan("com.devloper.joker.*.mapper.*")
+@MapperScan("com.devloper.joker.*.*.mapper.*")
 public class MybatisPlusConfig {
 
     @Bean
@@ -20,6 +22,8 @@ public class MybatisPlusConfig {
         properties.setProperty("format", "true");
         interceptor.setProperties(properties);
         return interceptor;
+
+        //return new PerformanceInterceptor();
     }
 
     /**
@@ -28,6 +32,16 @@ public class MybatisPlusConfig {
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         return new PaginationInterceptor();
+    }
+
+    @Bean
+    public QuerySupportMethod querySupportMethod() {
+        return new QuerySupportMethod();
+    }
+
+    @Bean
+    public SqlInjectorConfig sqlInjectorConfig() {
+        return new SqlInjectorConfig();
     }
 
 }

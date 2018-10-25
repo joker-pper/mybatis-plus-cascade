@@ -1,4 +1,4 @@
-package com.devloper.joker.mybatispluscascade.domain.user;
+package com.devloper.joker.mybatisplus.cascade.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
