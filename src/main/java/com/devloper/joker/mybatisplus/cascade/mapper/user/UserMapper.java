@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.devloper.joker.mybatisplus.cascade.core.QuerySupport;
+import com.devloper.joker.mybatis.plus.query.core.QuerySupport;
 import com.devloper.joker.mybatisplus.cascade.domain.user.User;
 import com.devloper.joker.mybatisplus.cascade.domain.user.UserRoleVO;
 import org.apache.ibatis.annotations.*;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.List;
 
 //可直接在这里定义方法列表,默认只有在类上加注解才会支持方法
-@QuerySupport()
+@QuerySupport
 public interface UserMapper extends BaseMapper<User> {
 
     String JOIN_SQL = "SELECT user.*, role.name as role_name, role.create_time as role_create_time FROM user as user LEFT JOIN role as role ON user.role_id = role.id";
