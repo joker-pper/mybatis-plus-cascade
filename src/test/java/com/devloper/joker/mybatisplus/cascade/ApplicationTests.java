@@ -22,7 +22,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MybatisPlusCascadeApplicationTests {
+public class ApplicationTests {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
