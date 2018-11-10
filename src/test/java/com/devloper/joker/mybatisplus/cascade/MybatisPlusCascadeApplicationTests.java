@@ -146,4 +146,24 @@ public class MybatisPlusCascadeApplicationTests {
         result = userMapper.selectByText("SELECT * FROM user", new QueryWrapper<User>().eq("role_id", 2).or().eq("id", 1L));
         logger.info("result: {}", toJson(result));
     }
+
+    @Test
+    public void findUserWithRoleByVoWithQueryListAndColumns() {
+        Object results = userMapper.findUserWithRoleByVoWithQueryListAndColumns(new QueryWrapper<UserRoleVO>().select("user.*", "role.name as role_name", "role.create_time").eq("role.id", 1L).eq("role.name", "admin"));
+        logger.info("查询的列表数据为: {}", toJson(results));
+    }
+
+    @Test
+    public void selectPageByCustomWithAssociationAndColumns() {
+        Page<User> userPage = new Page<>(1, 2);
+
+        Object results = userMapper.selectPageByCustomWithAssociationAndColumns(userPage, new QueryWrapper<User>().lambda().select().eq(User::getRole, 1L));
+        logger.info("查询的列表数据为: {}", toJson(results));
+
+        results = userMapper.selectPageByCustomWithAssociationAndColumns(userPage, new QueryWrapper<User>().lambda().select(User::getId, User::getUsername, User::getRole).eq(User::getRole, 1L));
+        logger.info("查询的列表数据为: {}", toJson(results));
+
+        results = userMapper.selectPageByCustomWithAssociationAndColumns(userPage, new QueryWrapper<User>().select("id", "username", "create_time", "role_id").eq("role_id", 1L));
+        logger.info("查询的列表数据为: {}", toJson(results));
+    }
 }

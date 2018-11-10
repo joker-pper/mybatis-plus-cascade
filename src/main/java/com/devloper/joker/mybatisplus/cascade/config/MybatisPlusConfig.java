@@ -6,7 +6,6 @@ import com.devloper.joker.mybatis.plus.query.core.QueryConfigProperty;
 import com.devloper.joker.mybatis.plus.query.core.QuerySupportMethod;
 import com.devloper.joker.mybatis.plus.query.core.QuerySupportSqlInjector;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
